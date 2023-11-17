@@ -1,39 +1,44 @@
 import express from "express";
+import { isAdmin, requireSignIn } from "./../middlewares/authMiddleware.js";
 import {
-  registerController,
-  loginController,
-  testController,
-  forgotPasswordController,
-  updateProfileController,
-} from "../controllers/authController.js";
-import { isAdmin, requireSignIn } from "../middlewares/authMiddleware.js";
+  categoryControlller,
+  createCategoryController,
+  deleteCategoryCOntroller,
+  singleCategoryController,
+  updateCategoryController,
+} from "./../controllers/categoryController.js";
 
-//router object
 const router = express.Router();
 
-//routing
-//REGISTER || METHOD POST
-router.post("/register", registerController);
+//routes
+// create category
+router.post(
+  "/create-category",
+  requireSignIn,
+  isAdmin,
+  createCategoryController
+);
 
-//LOGIN || POST
-router.post("/login", loginController);
+//update category
+router.put(
+  "/update-category/:id",
+  requireSignIn,
+  isAdmin,
+  updateCategoryController
+);
 
-//Forgot Password || POST
-router.post("/forgot-password", forgotPasswordController);
+//getALl category
+router.get("/get-category", categoryControlller);
 
-//test routes
-router.get("/test", requireSignIn, isAdmin, testController);
+//single category
+router.get("/single-category/:slug", singleCategoryController);
 
-//protected User route auth
-router.get("/user-auth", requireSignIn, (req, res) => {
-  res.status(200).send({ ok: true });
-});
-//protected Admin route auth
-router.get("/admin-auth", requireSignIn, isAdmin, (req, res) => {
-  res.status(200).send({ ok: true });
-});
-
-//update profile
-router.put("/profile", requireSignIn, updateProfileController);
+//delete category
+router.delete(
+  "/delete-category/:id",
+  requireSignIn,
+  isAdmin,
+  deleteCategoryCOntroller
+);
 
 export default router;
